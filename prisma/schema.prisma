@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String       @id @unique
+  username      String       @unique
+  walletAddress String       @unique
+  nonce         String
+  profile       Profile?
+  isActive      Boolean      @default(true)
+  orders        Order[]      @relation("seller")
+  boughtOrders  Order[]      @relation("buyer")
+  Collection    Collection[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  Listing       Listing[]
+  NFT           NFT[]
+}
+
+model Profile {
+  id        String   @id @unique
+  bio       String?
+  avatar    Photo?   @relation("avatar", fields: [avatarId], references: [id])
+  avatarId  String?  @unique
+  banner    Photo?   @relation("banner", fields: [bannerId], references: [id])
+  bannerId  String?  @unique
+  name      String?
+  lastName  String?
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Photo {
+  id            String      @id @unique
+  url           String
+  fileEntityId  String      @unique
+  file          FileEntity?
+  link          String?
+  profileAvatar Profile?    @relation("avatar")
+  profileBanner Profile?    @relation("banner")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Order {
+  id              String      @id @unique
+  price           Int
+  status          OrderStatus
+  nftId           String
+  sellerId        String
+  buyerId         String?
+  transactionHash String?
+  nft             NFT         @relation(fields: [nftId], references: [id])
+  seller          User        @relation("seller", fields: [sellerId], references: [id])
+  buyer           User?       @relation("buyer", fields: [buyerId], references: [id])
+  listing         Listing     @relation(fields: [listingId], references: [id])
+  listingId       String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Collection {
+  id         String                @id @unique
+  name       String
+  creatorId  String
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+  creator    User                  @relation(fields: [creatorId], references: [id])
+  attributes CollectionAttribute[]
+  nfts       NFT[]
+}
+
+model CollectionAttribute {
+  id           String     @id @unique
+  collectionId String
+  name         String
+  type         String
+  options      String[]
+  collection   Collection @relation(fields: [collectionId], references: [id])
+}
+
+model NFT {
+  id           String     @id @unique
+  collectionId String
+  tokenId      String
+  tokenAddress String
+  attributes   Json
+  collection   Collection @relation(fields: [collectionId], references: [id])
+  Listing      Listing[]
+  Order        Order[]
+  User         User?      @relation(fields: [userId], references: [id])
+  userId       String?
+}
+
+model FileEntity {
+  id          String   @id @unique
+  fileName    String
+  path        String
+  key         String
+  mimeType    String
+  size        Int
+  description String
+  photo       Photo?   @relation(fields: [photoId], references: [id])
+  photoId     String?  @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Listing {
+  id        String        @id @unique
+  price     Int
+  status    ListingStatus
+  network   Network
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  seller    User          @relation(fields: [sellerId], references: [id])
+  sellerId  String
+  nft       NFT           @relation(fields: [nftId], references: [id])
+  nftId     String
+  Order     Order[]
+}
+
+enum Network {
+  BNB
+  MAIN
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  INACTIVE
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}

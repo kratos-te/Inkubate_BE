@@ -1,0 +1,36 @@
+export const config = {
+  application: {
+    PORT: Number(process.env.PORT),
+    BCRYPT_SALT: Number(process.env.PORT),
+    HOST: process.env.HOST,
+    ENV: 'production',
+    isProd: true,
+    CLIENT_URL: process.env.CLIENT_URL,
+  },
+  database: {
+    DB_CONNECTOR: process.env.DB_CONNECTOR,
+    DB_HOST: process.env.DB_HOST,
+    DB_USER: process.env.DB_USER,
+    DB_PASSWORD: process.env.DB_PASSWORD,
+    DB_DATABASE: process.env.DB_DATABASE,
+    DB_PORT: Number(process.env.DB_PORT),
+    DATABASE_URL: process.env.DATABASE_URL,
+  },
+  secrets: {
+    JWT_PRIVATE_KEY: process.env.JWT_PRIVATE_KEY,
+    JWT_REFRESH_PRIVATE_KEY: process.env.JWT_REFRESH_PRIVATE_KEY,
+    JWT_CLIENT_PRIVATE_KEY: process.env.JWT_CLIENT_PRIVATE_KEY,
+    JWT_PUBLIC_KEY: process.env.JWT_PUBLIC_KEY,
+    JWT_ALGORITHM: process.env.JWT_ALGORITHM,
+    JWT_EXPIRE_TIME: Number(process.env.JWT_EXPIRE_TIME),
+    JWT_EXPIRE_REFRESH_TIME: Number(process.env.JWT_EXPIRE_REFRESH_TIME),
+    SESSION_SECRET: process.env.SESSION_SECRET,
+  },
+  redis: {
+    REDIS_HOST: process.env.REDIS_HOST,
+    REDIS_PORT: process.env.REDIS_PORT,
+    REDIS_USERNAME: process.env.REDIS_USERNAME,
+    REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+    REDIS_URL: process.env.REDIS_URL,
+  },
+};
